@@ -9,7 +9,7 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=copadomundo.db"));
-
+    
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
