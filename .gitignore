@@ -1,0 +1,38 @@
+# Build outputs
+bin/
+obj/
+out/
+dist/
+build/
+
+# .NET / Visual Studio
+.vs/
+.vscode/
+*.user
+*.suo
+*.cache
+*.log
+*.tmp
+*.swp
+
+# NuGet / package managers
+packages/
+node_modules/
+
+# Environment and secrets
+.env
+.env.*
+appsettings.Development.json
+appsettings.Local.json
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Project-specific generated or local data
+Data/
+
+# OS files
+.DS_Store
+Thumbs.db
