@@ -5,6 +5,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+builder.Services.AddEndpointsApiExplorer(); // Adiciona suporte para explorar endpoints da API, permitindo a geração de documentação e testes interativos usando ferramentas como Swagger.
+builder.Services.AddSwaggerGen();
+
 builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -16,6 +19,8 @@ if (app.Environment.IsDevelopment())
 
 {
 
+app.UseSwagger();
+app.UseSwaggerUI();
 app.MapOpenApi();
 
 }
