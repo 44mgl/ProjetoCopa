@@ -1,5 +1,7 @@
 using DotNet_React_CopaDoMundo.Data;
 using Microsoft.EntityFrameworkCore;
+using DotNet_React_CopaDoMundo.Services;
+using DotNet_React_CopaDoMundo.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +14,8 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=copadomundo.db"));
-    
+
+builder.Services.AddScoped<ISelecaoService, SelecaoService>(); // Quando alguem solicitar ISelecaoService, crie e entregue um SelecaoService.
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
