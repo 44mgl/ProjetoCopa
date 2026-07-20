@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DotNet_React_CopaDoMundo.Models;
-using DotNet_React_CopaDoMundo.Data; 
 using Microsoft.AspNetCore.Mvc; // Importa o namespace Microsoft.AspNetCore.Mvc, que contém classes e atributos para criar controladores e ações de API no ASP.NET Core
+using DotNet_React_CopaDoMundo.DTOs;
+using DotNet_React_CopaDoMundo.Services.Interfaces;
 
 // Colocar try catch em todos os metodos do controller
 namespace DotNet_React_CopaDoMundo.Controllers
@@ -13,71 +13,104 @@ namespace DotNet_React_CopaDoMundo.Controllers
     [Route("api/[controller]")] // Define a rota do controller como "api/selecao"
     public class SelecaoController : ControllerBase
     {
-        private readonly AppDbContext _context; // Contexto do banco injetado pelo ASP.NET Core. Será utilizado pelos métodos do Controller para acessar o banco.
-        public SelecaoController(AppDbContext context)
+        private readonly ISelecaoService _selecaoService; // Serviço Resposavel pelas regras e oprações relacioanadas as seleções.
+        private readonly ILogger<SelecaoController> _logger;
+        public SelecaoController(ISelecaoService selecaoService, ILogger<SelecaoController> logger)
         {
-            _context = context;
+            _selecaoService = selecaoService;
+            _logger = logger;
         }
 
         [HttpGet]
-        public ActionResult<List<Selecao>> GetSelecoes()
+        public ActionResult<List<SelecaoResponseDto>> GetSelecoes()
         {
-            var selecoes = _context.Selecoes.ToList();
-            return Ok(selecoes); 
+            try
+            {
+                var selecoes = _selecaoService.GetSelecoes();
+                return Ok(selecoes);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao buscar todas as seleções.");
+                return StatusCode(500, "Ocorreu um erro ao processar a solicitação de todas as seleções.");
+            }
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Selecao> GetSelecao(int id)
+        public ActionResult<SelecaoResponseDto> GetSelecao(int id)
         {
-            var selecao = _context.Selecoes.Find(id);
-            if (selecao == null)
+            try
             {
-                return NotFound(); // Retorna um status HTTP 404 Not Found, indicando que a seleção não foi encontrada no banco de dados.
-            }
+                var selecao = _selecaoService.GetSelecao(id);
+                if (selecao == null)
+                {
+                    return NotFound(); // Retorna um status HTTP 404 Not Found, indicando que a seleção não foi encontrada no banco de dados.
+                }
 
-            return Ok(selecao);
+                return Ok(selecao);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao buscar a seleção de ID {SelecaoId}.", id);
+                return StatusCode(500, "Ocorreu um erro ao processar a solicitação da seleção pedida.");
+            }
         }
 
         [HttpPost]
-        public ActionResult<Selecao> PostSelecao(Selecao selecao)
+        public ActionResult<SelecaoResponseDto> PostSelecao(SelecaoCreateDto dto)
         {
-            _context.Selecoes.Add(selecao);
-            _context.SaveChanges();
-
-            return CreatedAtAction(  // Retorna um status HTTP 201 Created, indicando que a seleção foi criada com sucesso, e inclui a URL para acessar a seleção recém-criada.
-            nameof(GetSelecao),
-            new { id = selecao.Id },
-            selecao
+            try
+            {
+                var selecaoCriada = _selecaoService.CriarSelecao(dto);
+                return CreatedAtAction(  // Retorna um status HTTP 201 Created, indicando que a seleção foi criada com sucesso, e inclui a URL para acessar a seleção recém-criada.
+                nameof(GetSelecao),
+                new { id = selecaoCriada.Id },
+                selecaoCriada
             );
+        }
+        catch (Exception ex)
+            {
+            _logger.LogError(ex, "Erro ao criar a seleção.");
+            return StatusCode(500, "Ocorreu um erro ao processar a solicitação de criação da seleção.");
+        }
         }
 
         [HttpPut("{id}")]
-        public ActionResult<Selecao> PutSelecao(int id, Selecao selecao)
+        public ActionResult<SelecaoResponseDto> PutSelecao(int id, SelecaoUpdateDto dto)
         {
-            var selecaoBanco = _context.Selecoes.Find(id);
-
-            if (selecaoBanco == null)
+            try
             {
-                return NotFound();
+                var selecaoAtualizada = _selecaoService.AtualizarSelecao(id, dto);
+                if (selecaoAtualizada == null)
+                {
+                    return NotFound();
+                }
+                return Ok(selecaoAtualizada);
             }
-            selecaoBanco.Nome = selecao.Nome;
-            selecaoBanco.Grupo = selecao.Grupo;
-            selecaoBanco.BandeiraUrl = selecao.BandeiraUrl;
-            _context.SaveChanges();
-            return Ok (selecaoBanco);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao atualizar a seleção de ID {SelecaoId}.", id);
+                return StatusCode(500, "Ocorreu um erro ao processar a solicitação de atualização da seleção.");
+            }
         }
 
         [HttpDelete("{id}")]
-        public ActionResult<Selecao> DeleteSelecao(int id)
+        public IActionResult DeleteSelecao(int id)
         {
-            var selecaoBanco = _context.Selecoes.Find(id);
-            if (selecaoBanco == null)
+            try
             {
-                return NotFound(); 
+                var excluiu = _selecaoService.ExcluirSelecao(id);
+                if (!excluiu)
+                {
+                    return NotFound();
+                }
+                return NoContent(); // Retorna um status HTTP 204 No Content, indicando que a seleção foi excluída com sucesso.
             }
-            _context.Selecoes.Remove(selecaoBanco);
-            _context.SaveChanges();
-            return NoContent(); // Retorna um status HTTP 204 No Content, indicando que a seleção foi excluída com sucesso.
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao excluir a seleção de ID {SelecaoId}.", id);
+                return StatusCode(500, "Ocorreu um erro ao processar a solicitação de exclusão da seleção.");
+            }
         }
     }
 }
