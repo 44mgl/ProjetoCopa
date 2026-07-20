@@ -32,7 +32,7 @@ namespace DotNet_React_CopaDoMundo.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao buscar todas as seleções.");
-                return StatusCode(500, "Ocorreu um erro ao processar a solicitação de todas as seleções.");
+                return StatusCode(400, "Ocorreu um erro ao processar a solicitação de todas as seleções.");
             }
         }
 
@@ -52,7 +52,7 @@ namespace DotNet_React_CopaDoMundo.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao buscar a seleção de ID {SelecaoId}.", id);
-                return StatusCode(500, "Ocorreu um erro ao processar a solicitação da seleção pedida.");
+                return StatusCode(400, "Ocorreu um erro ao processar a solicitação da seleção pedida.");
             }
         }
 
@@ -61,7 +61,7 @@ namespace DotNet_React_CopaDoMundo.Controllers
         {
             try
             {
-                var selecaoCriada = _selecaoService.CriarSelecao(dto);
+                var selecaoCriada = _selecaoService.PostSelecao(dto);
                 return CreatedAtAction(  // Retorna um status HTTP 201 Created, indicando que a seleção foi criada com sucesso, e inclui a URL para acessar a seleção recém-criada.
                 nameof(GetSelecao),
                 new { id = selecaoCriada.Id },
@@ -71,7 +71,7 @@ namespace DotNet_React_CopaDoMundo.Controllers
         catch (Exception ex)
             {
             _logger.LogError(ex, "Erro ao criar a seleção.");
-            return StatusCode(500, "Ocorreu um erro ao processar a solicitação de criação da seleção.");
+            return StatusCode(400, "Ocorreu um erro ao processar a solicitação de criação da seleção.");
         }
         }
 
@@ -80,7 +80,7 @@ namespace DotNet_React_CopaDoMundo.Controllers
         {
             try
             {
-                var selecaoAtualizada = _selecaoService.AtualizarSelecao(id, dto);
+                var selecaoAtualizada = _selecaoService.UpdateSelecao(id, dto);
                 if (selecaoAtualizada == null)
                 {
                     return NotFound();
@@ -90,7 +90,7 @@ namespace DotNet_React_CopaDoMundo.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao atualizar a seleção de ID {SelecaoId}.", id);
-                return StatusCode(500, "Ocorreu um erro ao processar a solicitação de atualização da seleção.");
+                return StatusCode(400, "Ocorreu um erro ao processar a solicitação de atualização da seleção.");
             }
         }
 
@@ -99,7 +99,7 @@ namespace DotNet_React_CopaDoMundo.Controllers
         {
             try
             {
-                var excluiu = _selecaoService.ExcluirSelecao(id);
+                var excluiu = _selecaoService.DeleteSelecao(id);
                 if (!excluiu)
                 {
                     return NotFound();
@@ -109,7 +109,7 @@ namespace DotNet_React_CopaDoMundo.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao excluir a seleção de ID {SelecaoId}.", id);
-                return StatusCode(500, "Ocorreu um erro ao processar a solicitação de exclusão da seleção.");
+                return StatusCode(400, "Ocorreu um erro ao processar a solicitação de exclusão da seleção.");
             }
         }
     }

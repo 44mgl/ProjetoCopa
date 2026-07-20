@@ -47,7 +47,7 @@ namespace DotNet_React_CopaDoMundo.Services
             return selecaoDto;
         }
 
-        public SelecaoResponseDto CriarSelecao(SelecaoCreateDto dto)
+        public SelecaoResponseDto PostSelecao(SelecaoCreateDto dto)
         {
             var selecao = new Selecao
             {
@@ -64,7 +64,7 @@ namespace DotNet_React_CopaDoMundo.Services
             return selecaoDto;
         }
 
-        public SelecaoResponseDto? AtualizarSelecao(int id, SelecaoUpdateDto dto)
+        public SelecaoResponseDto? UpdateSelecao(int id, SelecaoUpdateDto dto)
         {
             var selecaoBanco = _context.Selecoes.Find(id);
             if (selecaoBanco == null)
@@ -81,7 +81,7 @@ namespace DotNet_React_CopaDoMundo.Services
             return selecaoDto;
         }
 
-        public bool ExcluirSelecao(int id)
+        public bool DeleteSelecao(int id)
         {
             var selecaoBanco = _context.Selecoes.Find(id);
             if (selecaoBanco == null)
