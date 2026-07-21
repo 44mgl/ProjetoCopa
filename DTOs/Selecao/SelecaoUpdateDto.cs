@@ -27,5 +27,10 @@ namespace DotNet_React_CopaDoMundo.DTOs
         [Required(ErrorMessage = "A URL da bandeira da seleção é obrigatória.")]
         [Url(ErrorMessage = "A URL da bandeira da seleção não é válida.")]
         public string BandeiraUrl { get; set; } = string.Empty;
+
+        
+        [Required(ErrorMessage = "O ID do clube é obrigatório.")]
+        [Range(1, int.MaxValue, ErrorMessage = "O ID do clube deve ser maior que zero.")]
+        public int SelecaoId { get; internal set; }
     }
 }

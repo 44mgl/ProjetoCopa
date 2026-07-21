@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using DotNet_React_CopaDoMundo.Data;
 using DotNet_React_CopaDoMundo.Services.Interfaces;
 using DotNet_React_CopaDoMundo.DTOs.Clube;
+using Microsoft.EntityFrameworkCore;
 
 namespace DotNet_React_CopaDoMundo.Services.Clube
 {
@@ -27,25 +28,27 @@ namespace DotNet_React_CopaDoMundo.Services.Clube
             };
         }
 
-        public List<ClubeResponseDto> GetClubes()
+        public async Task<List<ClubeResponseDto>> GetClubes()
         {
-            var clubes = _context.Clubes.ToList();
+            var clubes = await _context.Clubes.ToListAsync();
             var clubesDto = clubes.Select(c => MapToDto(c)).ToList();
             return clubesDto;
         }
 
-        public ClubeResponseDto? GetClube(int id)
+        public async Task<ClubeResponseDto?> GetClube(int id)
         {
-            var clube = _context.Clubes.Find(id);
+            var clube = await _context.Clubes
+            .FirstOrDefaultAsync(clube => clube.Id == id);
+
             if (clube == null)
             {
-                return null;
+                throw new KeyNotFoundException("Clube não encontrado");
             }
             var clubeDto = MapToDto(clube);
             return clubeDto;
         }
 
-        public ClubeResponseDto PostClube(ClubeCreateDto dto)
+        public async Task<ClubeResponseDto> PostClube(ClubeCreateDto dto)
         {
             var clube = new Models.Clube
             {
@@ -55,38 +58,41 @@ namespace DotNet_React_CopaDoMundo.Services.Clube
             };
 
             _context.Clubes.Add(clube);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return MapToDto(clube);
         }
 
-        public ClubeResponseDto? UpdateClube(int id, ClubeUpdateDto dto)
+        public async Task<ClubeResponseDto?> UpdateClube(int id, ClubeUpdateDto dto)
         {
-            var clube = _context.Clubes.Find(id);
+
+            var clube = await _context.Clubes
+            .FirstOrDefaultAsync(clube => clube.Id == id);
             if (clube == null)
             {
-                return null;
+                throw new KeyNotFoundException("Clube não encontrado");
             }
 
             clube.Nome = dto.Nome;
             clube.Pais = dto.Pais;
             clube.EscudoUrl = dto.EscudoUrl;
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return MapToDto(clube);
         }
         
-        public bool DeleteClube(int id)
+        public async Task<bool> DeleteClube(int id)
         {
-            var clube = _context.Clubes.Find(id);
+            var clube = await _context.Clubes
+            .FirstOrDefaultAsync(clube => clube.Id == id);
+             
             if (clube == null)
             {
-                return false;
+                throw new KeyNotFoundException("Clube não encontrado");
             }
-
             _context.Clubes.Remove(clube);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return true;
         }

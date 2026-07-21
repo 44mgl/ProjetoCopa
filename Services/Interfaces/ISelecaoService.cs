@@ -8,14 +8,14 @@ namespace DotNet_React_CopaDoMundo.Services.Interfaces
 {
     public interface ISelecaoService
     {
-    List<SelecaoResponseDto> GetSelecoes();
+    Task<List<SelecaoResponseDto>> GetSelecoes();
 
-    SelecaoResponseDto? GetSelecao(int id);
+    Task<SelecaoResponseDto?> GetSelecao(int id);
 
-    SelecaoResponseDto PostSelecao(SelecaoCreateDto dto);
+    Task<SelecaoResponseDto> PostSelecao(SelecaoCreateDto dto);
 
-    SelecaoResponseDto? UpdateSelecao(int id, SelecaoUpdateDto dto);
+    Task<SelecaoResponseDto?> UpdateSelecao(int id, SelecaoUpdateDto dto);
 
-    bool DeleteSelecao(int id);
+    Task<bool> DeleteSelecao(int id);
     }
 }

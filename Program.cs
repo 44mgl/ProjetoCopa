@@ -4,6 +4,8 @@ using DotNet_React_CopaDoMundo.Services;
 using DotNet_React_CopaDoMundo.Services.Interfaces;
 using DotNet_React_CopaDoMundo.Services.Clube;
 using DotNet_React_CopaDoMundo.Middlewares;
+using DotNet_React_CopaDoMundo.Services.Jogador;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +22,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<ISelecaoService, SelecaoService>(); // Quando alguem solicitar ISelecaoService, crie e entregue um SelecaoService.
 builder.Services.AddScoped<IClubeService, ClubeService>(); // Quando alguem solicitar IClubeService, crie e entregue um ClubeService.
+builder.Services.AddScoped<IJogadorService, JogadorService>();
 
 var app = builder.Build();
 
