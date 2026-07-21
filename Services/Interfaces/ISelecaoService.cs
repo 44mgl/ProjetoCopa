@@ -12,10 +12,10 @@ namespace DotNet_React_CopaDoMundo.Services.Interfaces
 
     SelecaoResponseDto? GetSelecao(int id);
 
-    SelecaoResponseDto CriarSelecao(SelecaoCreateDto dto);
+    SelecaoResponseDto PostSelecao(SelecaoCreateDto dto);
 
-    SelecaoResponseDto? AtualizarSelecao(int id, SelecaoUpdateDto dto);
+    SelecaoResponseDto? UpdateSelecao(int id, SelecaoUpdateDto dto);
 
-    bool ExcluirSelecao(int id);
+    bool DeleteSelecao(int id);
     }
 }
