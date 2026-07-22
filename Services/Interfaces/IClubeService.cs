@@ -8,14 +8,14 @@ namespace DotNet_React_CopaDoMundo.Services.Interfaces
 {
     public interface IClubeService
     {
-        List<ClubeResponseDto> GetClubes();
+        Task<List<ClubeResponseDto>> GetClubes();
 
-        ClubeResponseDto? GetClube(int id);
+        Task<ClubeResponseDto?> GetClube(int id);
 
-        ClubeResponseDto PostClube(ClubeCreateDto dto);
+        Task<ClubeResponseDto> PostClube(ClubeCreateDto dto);
 
-        ClubeResponseDto? UpdateClube(int id, ClubeUpdateDto dto);
+        Task<ClubeResponseDto?> UpdateClube(int id, ClubeUpdateDto dto);
 
-        bool DeleteClube(int id);
+        Task<bool> DeleteClube(int id);
     }
 }

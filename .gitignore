@@ -30,8 +30,6 @@ appsettings.Local.json
 *.sqlite
 *.sqlite3
 
-# Project-specific generated or local data
-Data/
 
 # OS files
 .DS_Store
