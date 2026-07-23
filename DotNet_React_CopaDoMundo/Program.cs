@@ -45,6 +45,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
     app.MapOpenApi();
+    
 
 }
 
@@ -52,8 +53,9 @@ app.UseCors();
 
 app.UseMiddleware<ExceptionMiddleware>();
 
+app.UseCors("ReactPolicy");
 app.UseHttpsRedirection();
-app.UseAuthorization();
+app.UseAuthorization();  
 
 app.MapControllers();
 
