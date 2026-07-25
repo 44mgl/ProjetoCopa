@@ -13,30 +13,218 @@ interface Selecao {
 function SelecoesPage() {
     
     const [selecoes, setSelecoes] = useState<Selecao[]>([]);
+    
+    const [idPesquisa, setIdPesquisa] = useState("");
+    const [selecaoEncontrada, setSelecaoEncontrada] = useState<Selecao | null>(null);
+    
+    const [carregando, setCarregando] = useState(true);  // Controla a interface
+
+    const [nome, setNome] = useState("");
+    const [grupo, setGrupo] = useState("");
+    const [bandeiraUrl, setBandeiraUrl] = useState("");
+
+    const [selecaoEditandoId, setSelecaoEditandoId] = useState<number | null>(null);
 
     async function buscarSelecoes() {
-        const resposta = await api.get<Selecao[]>("/Selecao");
+        
+        try {
+            const resposta = await api.get<Selecao[]>("/Selecao");
 
-        setSelecoes(resposta.data);
+            setSelecoes(resposta.data);
+        }
+        catch (erro) {
+           console.log(erro)
+        }
+        finally { // Sempre executa, não importa se deu erro ou não
+            setCarregando(false);
+        }
     }
+
+     async function buscarSelecaoPorId() {
+         const id = Number(idPesquisa);
+         
+         if (!idPesquisa || id <= 0) {
+             console.log("Digite um ID válido")
+             return;
+        }
+         try
+        {
+            const resposta = await api.get(`/Selecao/${id}`);
+
+            setSelecaoEncontrada(resposta.data);
+        }
+         catch (erro)
+        {
+            console.log(erro);
+            setSelecaoEncontrada(null);
+        }
+    }
+
+    async function cadastrarSelecao(evento: React.FormEvent<HTMLFormElement>) {
+            evento.preventDefault();
+
+        try {
+            const novaSelecao = {
+                nome,
+                grupo,
+                bandeiraUrl
+            };
+
+            await api.post("/Selecao", novaSelecao);
+
+            await buscarSelecoes();
+
+            setNome("");
+            setGrupo("");
+            setBandeiraUrl("");
+        }
+        catch (erro) {
+            console.log(erro);
+        }
+    }
+
+    async function excluirSelecao(id: number) {
+         try {
+            await api.delete(`/Selecao/${id}`);
+
+            await buscarSelecoes();
+        }
+        catch (erro) {
+            console.log(erro);
+        }
+    }
+    
+    async function editarSelecao(selecao: Selecao) {
+            setSelecaoEditandoId(selecao.id);
+            setNome(selecao.nome);
+            setGrupo(selecao.grupo);
+            setBandeiraUrl(selecao.bandeiraUrl);
+        }
+
+    async function atualizarSelecao(evento: React.FormEvent<HTMLFormElement>) {
+            evento.preventDefault();
+
+            if (selecaoEditandoId === null) {
+                return;
+            }
+
+            try {
+                const selecaoAtualizada = {
+                    nome,
+                    grupo,
+                    bandeiraUrl
+                };
+                
+            await api.put(`/Selecao/${selecaoEditandoId}`,selecaoAtualizada);
+
+            await buscarSelecoes();
+                setNome("");
+                setGrupo("");
+                setBandeiraUrl("");
+                setSelecaoEditandoId(null);
+            } 
+            catch (erro)
+            {
+                console.log("Erro ao atualizar: ", erro);
+            }
+    }
+
+    function cancelarEdicao() {
+            setSelecaoEditandoId(null);
+            setNome("");
+            setGrupo("");
+            setBandeiraUrl("");
+            setIdPesquisa("");
+            setSelecaoEncontrada(null);
+    }
+        
 
     useEffect(() => {
       buscarSelecoes();
     }, []);
 
+    if (carregando) {
+        return <h2>{"Carregando Seleções..."}</h2>
+    }
+
   return (
     <main>
-      <h1>Seleções da Copa Do Mundo</h1>
-
-      {selecoes.map((selecao) => (
-        <CardSelecao
-          key={selecao.id} 
-          nome={selecao.nome}
-          grupo={selecao.grupo}
-          bandeiraUrl={selecao.bandeiraUrl}
+        <h1>Seleções da Copa Do Mundo</h1>
+          
+        <form onSubmit={
+         selecaoEditandoId === null
+            ? cadastrarSelecao
+            : atualizarSelecao
+        }>
+        <input
+          type="text"
+          placeholder="Nome da seleção"
+          value={nome}
+          onChange={(evento) => setNome(evento.target.value)}
         />
-      ))}
-     
+
+        <input
+          type="text"
+          placeholder="Grupo"
+          value={grupo}
+          onChange={(evento) => setGrupo(evento.target.value)}
+        />
+
+        <input
+          type="text"
+          placeholder="URL da bandeira"
+          value={bandeiraUrl}
+          onChange={(evento) => setBandeiraUrl(evento.target.value)}
+        />
+
+          <button type="submit">
+            {selecaoEditandoId === null
+             ? "Cadastrar"
+             : "Atualizar"}
+          </button>
+          
+          <button
+            type="button"
+            onClick={cancelarEdicao}>Limpar
+          </button>
+           
+          <input
+            type="number"
+            placeholder="Digite o ID"
+            value={idPesquisa}
+            onChange={(evento) => setIdPesquisa(evento.target.value)}
+            />
+
+            <button className="botaoPesquisar"
+            type="button"
+            onClick={buscarSelecaoPorId}>Pesquisar
+            </button>
+              
+          </form>
+
+        {selecaoEncontrada !== null ? (
+        <CardSelecao
+            id={selecaoEncontrada.id}
+            nome={selecaoEncontrada.nome}
+            grupo={selecaoEncontrada.grupo}
+            bandeiraUrl={selecaoEncontrada.bandeiraUrl}
+            onExcluir={excluirSelecao}
+            onEditar={() => editarSelecao(selecaoEncontrada)}
+        />
+        ) : (
+        selecoes.map((selecao) => (
+            <CardSelecao
+            key={selecao.id}
+            id={selecao.id}
+            nome={selecao.nome}
+            grupo={selecao.grupo}
+            bandeiraUrl={selecao.bandeiraUrl}
+            onExcluir={excluirSelecao}
+            onEditar={() => editarSelecao(selecao)}
+            />
+         ))
+        )} 
+        
     </main>
   );
 }

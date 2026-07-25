@@ -65,8 +65,7 @@ namespace DotNet_React_CopaDoMundo.Services
 
         public async Task<SelecaoResponseDto?> UpdateSelecao(int id, SelecaoUpdateDto dto)
         {
-            var selecaoBanco = await _context.Selecoes
-            .FirstOrDefaultAsync(selecaoBanco => selecaoBanco.Id == dto.SelecaoId);
+            var selecaoBanco = await _context.Selecoes.FindAsync(id);
             if (selecaoBanco == null)
             {
                 throw new KeyNotFoundException("Seleção não encontrada");
@@ -84,8 +83,7 @@ namespace DotNet_React_CopaDoMundo.Services
 
         public async Task<bool> DeleteSelecao(int id)
         {
-            var selecaoBanco = await _context.Selecoes
-            .FirstOrDefaultAsync(selecaoBanco => selecaoBanco.Id == id);
+            var selecaoBanco = await _context.Selecoes.FindAsync(id);
             if (selecaoBanco == null)
             {
                 throw new KeyNotFoundException("Seleção não encontrada");
