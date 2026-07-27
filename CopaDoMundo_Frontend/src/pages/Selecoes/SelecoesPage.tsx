@@ -12,18 +12,20 @@ interface Selecao {
 
 function SelecoesPage() {
     
-    const [selecoes, setSelecoes] = useState<Selecao[]>([]);
-    
-    const [idPesquisa, setIdPesquisa] = useState("");
-    const [selecaoEncontrada, setSelecaoEncontrada] = useState<Selecao | null>(null);
-    
-    const [carregando, setCarregando] = useState(true);  // Controla a interface
+    const [selecoes, setSelecoes] = useState<Selecao[]>([]); // Guarda todas as selecoes da API
 
-    const [nome, setNome] = useState("");
+    const [pesquisar, setPesquisar] = useState(""); // Cria um novo array somente com as seleções cujo nome contém o texto pesquisado
+    const selecoesFiltradas = selecoes.filter((selecao) =>
+    selecao.nome.toLowerCase().includes(pesquisar.toLowerCase())
+    );
+
+    const [carregando, setCarregando] = useState(true);  // Guarda se os dados ainda estão sendo carregados
+
+    const [nome, setNome] = useState(""); 
     const [grupo, setGrupo] = useState("");
     const [bandeiraUrl, setBandeiraUrl] = useState("");
 
-    const [selecaoEditandoId, setSelecaoEditandoId] = useState<number | null>(null);
+    const [selecaoEditandoId, setSelecaoEditandoId] = useState<number | null>(null); // Pega o ID da selecao que esta sendo editada
 
     async function buscarSelecoes() {
         
@@ -40,28 +42,8 @@ function SelecoesPage() {
         }
     }
 
-     async function buscarSelecaoPorId() {
-         const id = Number(idPesquisa);
-         
-         if (!idPesquisa || id <= 0) {
-             console.log("Digite um ID válido")
-             return;
-        }
-         try
-        {
-            const resposta = await api.get(`/Selecao/${id}`);
-
-            setSelecaoEncontrada(resposta.data);
-        }
-         catch (erro)
-        {
-            console.log(erro);
-            setSelecaoEncontrada(null);
-        }
-    }
-
     async function cadastrarSelecao(evento: React.FormEvent<HTMLFormElement>) {
-            evento.preventDefault();
+            evento.preventDefault(); // evitar que links redirecionem a página ou que formulários façam recarregamentos ao serem enviados, permitindo que você controle essas ações de forma assíncrona
 
         try {
             const novaSelecao = {
@@ -134,8 +116,7 @@ function SelecoesPage() {
             setNome("");
             setGrupo("");
             setBandeiraUrl("");
-            setIdPesquisa("");
-            setSelecaoEncontrada(null);
+            setPesquisar("");
     }
         
 
@@ -156,74 +137,62 @@ function SelecoesPage() {
             ? cadastrarSelecao
             : atualizarSelecao
         }>
-        <input
-          type="text"
-          placeholder="Nome da seleção"
-          value={nome}
-          onChange={(evento) => setNome(evento.target.value)}
-        />
-
-        <input
-          type="text"
-          placeholder="Grupo"
-          value={grupo}
-          onChange={(evento) => setGrupo(evento.target.value)}
-        />
-
-        <input
-          type="text"
-          placeholder="URL da bandeira"
-          value={bandeiraUrl}
-          onChange={(evento) => setBandeiraUrl(evento.target.value)}
-        />
-
-          <button type="submit">
-            {selecaoEditandoId === null
-             ? "Cadastrar"
-             : "Atualizar"}
-          </button>
-          
-          <button
-            type="button"
-            onClick={cancelarEdicao}>Limpar
-          </button>
-           
-          <input
-            type="number"
-            placeholder="Digite o ID"
-            value={idPesquisa}
-            onChange={(evento) => setIdPesquisa(evento.target.value)}
+            <input
+                type="text"
+                placeholder="Nome da Seleção"
+                value={nome}
+                onChange={(evento) => setNome(evento.target.value)}
             />
 
-            <button className="botaoPesquisar"
-            type="button"
-            onClick={buscarSelecaoPorId}>Pesquisar
+            <input
+                type="text"
+                placeholder="Grupo"
+                value={grupo}
+                onChange={(evento) => setGrupo(evento.target.value)}
+            />
+
+            <input
+                type="text"
+                placeholder="URL da Bandeira"
+                value={bandeiraUrl}
+                onChange={(evento) => setBandeiraUrl(evento.target.value)}
+            />
+                
+            <input
+                type="text"
+                placeholder="Pesquisar Seleção..."
+                value={pesquisar}
+                onChange={(e) => setPesquisar(e.target.value)}
+            />
+
+            <button type="submit">
+                {selecaoEditandoId === null
+                ? "Cadastrar"
+                : "Atualizar"}
+            </button>
+            
+            <button
+                type="button"
+                onClick={cancelarEdicao}>Limpar
             </button>
               
           </form>
 
-        {selecaoEncontrada !== null ? (
-        <CardSelecao
-            id={selecaoEncontrada.id}
-            nome={selecaoEncontrada.nome}
-            grupo={selecaoEncontrada.grupo}
-            bandeiraUrl={selecaoEncontrada.bandeiraUrl}
-            onExcluir={excluirSelecao}
-            onEditar={() => editarSelecao(selecaoEncontrada)}
-        />
-        ) : (
-        selecoes.map((selecao) => (
+        {selecoesFiltradas.length === 0 ? (
+        <p>Nenhuma Seleção Encontrada.</p>
+    ) : (
+        selecoesFiltradas.map((selecao) => (
             <CardSelecao
-            key={selecao.id}
-            id={selecao.id}
-            nome={selecao.nome}
-            grupo={selecao.grupo}
-            bandeiraUrl={selecao.bandeiraUrl}
-            onExcluir={excluirSelecao}
-            onEditar={() => editarSelecao(selecao)}
+                key={selecao.id}
+                id={selecao.id}
+                nome={selecao.nome}
+                grupo={selecao.grupo}
+                bandeiraUrl={selecao.bandeiraUrl}
+                onExcluir={excluirSelecao}
+                onEditar={() => editarSelecao(selecao)}
             />
-         ))
-        )} 
+        ))
+    )}
         
     </main>
   );
