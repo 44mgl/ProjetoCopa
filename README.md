@@ -34,9 +34,6 @@ ProjetoCopa
 - Consumo da API
 - Interface Web
 
-## Screenshots
-
-(em breve)
 
 ## Como executar
 

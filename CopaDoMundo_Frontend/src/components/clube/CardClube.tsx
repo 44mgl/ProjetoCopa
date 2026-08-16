@@ -1,20 +1,20 @@
-interface CardSelecaoProps {
+interface CardClubeProps {
     id: number;
     nome: string;
-    grupo: string;
-    bandeiraUrl: string;
+    pais: string;
+    escudoUrl: string;
     onExcluir: (id: number) => void;
     onEditar: (id: number) => void;
 }
 
-function CardSelecao({ id, nome, grupo, bandeiraUrl, onExcluir, onEditar }: CardSelecaoProps) {
+function CardClube({ id, nome, pais, escudoUrl, onExcluir, onEditar }: CardClubeProps) {
     return (
         <div className="card">
-            <img className="card-imagem" src={bandeiraUrl} alt={`Bandeira de ${nome}`} />
+            <img className="card-imagem" src={escudoUrl} alt={`Escudo de ${nome}`} />
 
             <div className="card-corpo">
                 <h2>{nome}</h2>
-                <p>Grupo: {grupo}</p>
+                <p>País: {pais}</p>
             </div>
 
             <div className="card-acoes">
@@ -30,4 +30,4 @@ function CardSelecao({ id, nome, grupo, bandeiraUrl, onExcluir, onEditar }: Card
     );
 }
 
-export default CardSelecao;
+export default CardClube;
