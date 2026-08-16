@@ -1,6 +1,4 @@
-// Representa a página completa de seleções e organiza a lista.
-
-interface CardSelecaoProps{ // Define o que o componente precisa receber
+interface CardSelecaoProps {
     id: number;
     nome: string;
     grupo: string;
@@ -9,23 +7,25 @@ interface CardSelecaoProps{ // Define o que o componente precisa receber
     onEditar: (id: number) => void;
 }
 
-function CardSelecao({ id, nome, grupo, bandeiraUrl, onExcluir, onEditar }: CardSelecaoProps) { // Componente recebe os valores
+function CardSelecao({ id, nome, grupo, bandeiraUrl, onExcluir, onEditar }: CardSelecaoProps) {
     return (
-        <div>
-            <img src={bandeiraUrl} alt={`Bandeira de ${nome}`} />
-            
-            <h2>{nome}</h2>
+        <div className="card">
+            <img className="card-imagem" src={bandeiraUrl} alt={`Bandeira de ${nome}`} />
 
-            <p>Grupo: {grupo}</p>
+            <div className="card-corpo">
+                <h2>{nome}</h2>
+                <p>Grupo: {grupo}</p>
+            </div>
 
-            <button onClick={() => onExcluir(id)}>
-               Excluir
-            </button>
+            <div className="card-acoes">
+                <button className="btn btn-editar" onClick={() => onEditar(id)}>
+                    Editar
+                </button>
 
-            <button onClick={()=> onEditar(id)}>
-               Editar
-            </button>
-            
+                <button className="btn btn-perigo" onClick={() => onExcluir(id)}>
+                    Excluir
+                </button>
+            </div>
         </div>
     );
 }

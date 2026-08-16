@@ -1,4 +1,4 @@
-interface CardClubeProps{
+interface CardClubeProps {
     id: number;
     nome: string;
     pais: string;
@@ -9,21 +9,23 @@ interface CardClubeProps{
 
 function CardClube({ id, nome, pais, escudoUrl, onExcluir, onEditar }: CardClubeProps) {
     return (
-        <div>
-            <img src={escudoUrl} alt={`Bandeira de ${nome}`} />
+        <div className="card">
+            <img className="card-imagem" src={escudoUrl} alt={`Escudo de ${nome}`} />
 
-            <h2>{nome}</h2>
+            <div className="card-corpo">
+                <h2>{nome}</h2>
+                <p>País: {pais}</p>
+            </div>
 
-            <p>Grupo: {pais}</p>
+            <div className="card-acoes">
+                <button className="btn btn-editar" onClick={() => onEditar(id)}>
+                    Editar
+                </button>
 
-            <button onClick={() => onExcluir(id)}>
-                Excluir
-            </button>
-
-            <button onClick={() => onEditar(id)}>
-                Editar
-            </button>
-
+                <button className="btn btn-perigo" onClick={() => onExcluir(id)}>
+                    Excluir
+                </button>
+            </div>
         </div>
     );
 }

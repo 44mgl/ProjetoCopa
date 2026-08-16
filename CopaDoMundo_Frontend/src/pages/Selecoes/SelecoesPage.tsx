@@ -125,14 +125,19 @@ function SelecoesPage() {
     }, []);
 
     if (carregando) {
-        return <h2>{"Carregando Seleções..."}</h2>
+        return <p className="carregando">Carregando Seleções...</p>
     }
 
   return (
-    <main>
-        <h1>Seleções da Copa Do Mundo</h1>
-          
-        <form onSubmit={
+    <main className="pagina">
+        <div className="cabecalho-pagina">
+            <h1>Seleções da Copa do Mundo</h1>
+            <p>Cadastre e gerencie as seleções participantes</p>
+        </div>
+
+        <form
+            className="formulario"
+            onSubmit={
          selecaoEditandoId === null
             ? cadastrarSelecao
             : atualizarSelecao
@@ -159,29 +164,33 @@ function SelecoesPage() {
             />
                 
             <input
+                className="campo-busca"
                 type="text"
                 placeholder="Pesquisar Seleção..."
                 value={pesquisar}
                 onChange={(e) => setPesquisar(e.target.value)}
             />
 
-            <button type="submit">
-                {selecaoEditandoId === null
-                ? "Cadastrar"
-                : "Atualizar"}
-            </button>
-            
-            <button
-                type="button"
-                onClick={cancelarEdicao}>Limpar
-            </button>
-              
+            <div className="botoes-form">
+                <button className="btn btn-primario" type="submit">
+                    {selecaoEditandoId === null
+                    ? "Cadastrar"
+                    : "Atualizar"}
+                </button>
+
+                <button
+                    className="btn btn-secundario"
+                    type="button"
+                    onClick={cancelarEdicao}>Limpar
+                </button>
+            </div>
           </form>
 
         {selecoesFiltradas.length === 0 ? (
-        <p>Nenhuma Seleção Encontrada.</p>
+        <p className="vazio">Nenhuma Seleção Encontrada.</p>
     ) : (
-        selecoesFiltradas.map((selecao) => (
+        <div className="lista-cards">
+        {selecoesFiltradas.map((selecao) => (
             <CardSelecao
                 key={selecao.id}
                 id={selecao.id}
@@ -191,7 +200,8 @@ function SelecoesPage() {
                 onExcluir={excluirSelecao}
                 onEditar={() => editarSelecao(selecao)}
             />
-        ))
+        ))}
+        </div>
     )}
         
     </main>

@@ -16,7 +16,7 @@ function ClubesPage() {
     
     const [pesquisar, setPesquisar] = useState(""); // Cria um novo array somente com as seleções cujo nome contém o texto pesquisado
     const clubesFiltrados = clubes.filter((clube) =>
-    clube.nome.toLowerCase().includes(pesquisar.toLowerCase())
+        clube.nome.toLowerCase().includes(pesquisar.toLowerCase())
     );
 
     const [carregando, setCarregando] = useState(true);
@@ -84,6 +84,8 @@ async function buscarClubes() {
     }
 
     async function atualizarClube(evento: React.FormEvent<HTMLFormElement>) {
+        evento.preventDefault();
+
         if (clubeEditandoId === null) {
             return;
         }
@@ -121,14 +123,19 @@ async function buscarClubes() {
     }, []);
 
     if (carregando) {
-        return <h2>{"Carregando Clubes..."}</h2>
+        return <p className="carregando">Carregando Clubes...</p>
     }
 
     return (
-        <main>
-            <h1>Clubes Dos Jogadores</h1>
+        <main className="pagina">
+            <div className="cabecalho-pagina">
+                <h1>Clubes dos Jogadores</h1>
+                <p>Cadastre e gerencie os clubes dos atletas</p>
+            </div>
 
-            <form onSubmit={
+            <form
+                className="formulario"
+                onSubmit={
                 clubeEditandoId === null
                     ? cadastrarClube
                     : atualizarClube
@@ -155,29 +162,34 @@ async function buscarClubes() {
                 />
 
                 <input
+                    className="campo-busca"
                     type="text"
                     placeholder="Pesquisar Clube..."
                     value={pesquisar}
                     onChange={(evento) => setPesquisar(evento.target.value)}
                 />
 
-                <button type="submit">
-                    {clubeEditandoId === null
-                        ? "Cadastrar"
-                        : "Atualizar"
-                    }
-                </button>
+                <div className="botoes-form">
+                    <button className="btn btn-primario" type="submit">
+                        {clubeEditandoId === null
+                            ? "Cadastrar"
+                            : "Atualizar"
+                        }
+                    </button>
 
-                <button
-                    type="button"
-                    onClick={cancelarEdicao}>Limpar
-                </button>
+                    <button
+                        className="btn btn-secundario"
+                        type="button"
+                        onClick={cancelarEdicao}>Limpar
+                    </button>
+                </div>
             </form>
 
             {clubesFiltrados.length === 0 ? (
-                <p>Nenhum Clube Encontrado.</p>
+                <p className="vazio">Nenhum Clube Encontrado.</p>
             ) : (
-                clubesFiltrados.map((clube) => (
+                <div className="lista-cards">
+                {clubesFiltrados.map((clube) => (
                     <CardClube
                         key={clube.id}
                         id={clube.id}
@@ -187,7 +199,8 @@ async function buscarClubes() {
                         onExcluir={excluirClube}
                         onEditar={() => editarClube(clube)}
                     />
-                ))
+                ))}
+                </div>
             )}
         </main>
     );
